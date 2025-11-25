@@ -1,0 +1,16 @@
+# 核心依赖
+requests>=2.28.0
+beautifulsoup4>=4.11.0
+lxml>=4.9.0
+PyYAML>=6.0
+Jinja2>=3.1.0
+python-dateutil>=2.8.0
+
+# HTTP请求增强
+urllib3>=2.0.0
+
+# 可选依赖（需要时可以取消注释）
+# selenium>=4.8.0          # 处理JavaScript渲染页面
+# playwright>=1.40.0       # 现代化浏览器自动化
+# schedule>=1.2.0          # 定时任务
+# pandas>=2.0.0            # 数据处理和导出Excel

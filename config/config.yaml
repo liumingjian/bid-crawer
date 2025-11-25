@@ -1,0 +1,196 @@
+# ============================================
+# 招标信息爬虫系统配置文件
+# ============================================
+
+# 爬虫基础配置
+crawler:
+  request_delay: 2              # 请求间隔(秒)，避免频繁请求
+  timeout: 30                   # 请求超时时间(秒)
+  retry_times: 3                # 失败重试次数
+  retry_delay: 5                # 重试间隔(秒)
+  max_pages: 10                 # 每个网站最大采集页数
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+# 数据筛选配置
+filters:
+  date_range: 7                 # 采集最近N天的数据
+  min_amount: 0                 # 最小预算金额(万元)，0表示不限
+  max_amount: 0                 # 最大预算金额(万元)，0表示不限
+  title_must_contain: []        # 标题必须包含的词（AND关系）
+  title_any_contain: []         # 标题包含任意词即可（OR关系）
+
+# 目标行业配置
+industries:
+  - name: "金融"
+    enabled: true
+    keywords:
+      - "银行"
+      - "证券"
+      - "保险"
+      - "基金"
+      - "信托"
+      - "金融"
+
+  - name: "医疗"
+    enabled: true
+    keywords:
+      - "医院"
+      - "卫健委"
+      - "卫生健康"
+      - "疾控中心"
+      - "医疗"
+      - "中医院"
+
+  - name: "运营商"
+    enabled: true
+    keywords:
+      - "移动"
+      - "联通"
+      - "电信"
+      - "广电"
+      - "通信"
+
+  - name: "政府"
+    enabled: true
+    keywords:
+      - "政务"
+      - "大数据局"
+      - "数据资源"
+      - "政府"
+      - "机关"
+
+  - name: "能源"
+    enabled: true
+    keywords:
+      - "电力"
+      - "电网"
+      - "石油"
+      - "石化"
+      - "燃气"
+      - "能源"
+
+  - name: "教育"
+    enabled: true
+    keywords:
+      - "大学"
+      - "学院"
+      - "高校"
+      - "教育"
+
+# 技术关键词配置
+tech_keywords:
+  # 运维服务类
+  service:
+    - "维保"
+    - "运维"
+    - "技术支持"
+    - "驻场"
+    - "运营服务"
+    - "技术服务"
+
+  # 数据库类
+  database:
+    - "数据库"
+    - "GaussDB"
+    - "高斯数据库"
+    - "OceanBase"
+    - "TiDB"
+    - "达梦"
+    - "人大金仓"
+    - "MySQL"
+    - "Oracle"
+    - "PostgreSQL"
+    - "SQL Server"
+
+  # 大数据类
+  bigdata:
+    - "大数据"
+    - "Hadoop"
+    - "CDH"
+    - "Cloudera"
+    - "Spark"
+    - "Hive"
+    - "HBase"
+    - "Kafka"
+    - "Flink"
+    - "ClickHouse"
+    - "Doris"
+    - "数据仓库"
+    - "数据湖"
+    - "数据中台"
+
+  # 中间件类
+  middleware:
+    - "中间件"
+    - "Redis"
+    - "RabbitMQ"
+    - "Nginx"
+    - "Tomcat"
+    - "WebLogic"
+    - "消息队列"
+    - "缓存"
+
+  # 信创类
+  xinchuang:
+    - "信创"
+    - "国产化"
+    - "自主可控"
+    - "国产数据库"
+    - "国产中间件"
+
+# 目标网站配置
+websites:
+  - name: "中国政府采购网"
+    url: "https://www.ccgp.gov.cn"
+    search_url: "https://search.ccgp.gov.cn/bxsearch"
+    enabled: true
+    parser: "ccgp"
+    encoding: "utf-8"
+    notes: "政府采购主站，数据量大"
+
+  - name: "中国招标投标公共服务平台"
+    url: "http://www.cebpubservice.com"
+    search_url: "http://www.cebpubservice.com/xxgg/index.html"
+    enabled: true
+    parser: "cebp"
+    encoding: "utf-8"
+    notes: "综合招标平台"
+
+  - name: "中国采购与招标网"
+    url: "https://www.chinabidding.cn"
+    search_url: "https://www.chinabidding.cn/search/searchzbgg"
+    enabled: true
+    parser: "chinabidding"
+    encoding: "utf-8"
+    notes: "综合招标信息"
+
+  - name: "全国公共资源交易平台"
+    url: "http://www.ggzy.gov.cn"
+    search_url: "http://www.ggzy.gov.cn/information/html/a/index.html"
+    enabled: false
+    parser: "ggzy"
+    encoding: "utf-8"
+    notes: "公共资源交易，结构复杂"
+
+  - name: "比地招标网"
+    url: "https://www.bidizhaobiao.com"
+    search_url: "https://www.bidizhaobiao.com/zbgg"
+    enabled: false
+    parser: "bidi"
+    encoding: "utf-8"
+    notes: "第三方招标聚合平台"
+
+# 输出配置
+output:
+  report_dir: "./reports"                    # 报告输出目录
+  report_name: "bid_report_{date}.html"      # 报告文件名模板
+  data_dir: "./data"                         # 原始数据保存目录
+  save_raw_data: true                        # 是否保存原始数据(JSON)
+  keep_days: 30                              # 报告保留天数
+
+# 日志配置
+logging:
+  level: "INFO"                              # 日志级别: DEBUG, INFO, WARNING, ERROR
+  file: "./logs/crawler.log"                 # 日志文件路径
+  max_size: 10                               # 单个日志文件最大MB
+  backup_count: 5                            # 保留日志文件数量
