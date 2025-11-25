@@ -1,144 +1,144 @@
 # 招标信息爬虫系统
 
-一个用于采集国内主流招标网站招标信息的自动化工具，支持按行业、关键词筛选，生成美观的HTML报告。
+一个自动化采集国内主流招标网站招标信息的Python爬虫系统，支持关键词筛选、行业分类、数据去重，并生成美观的HTML报告。
 
-## 功能特点
+## 📋 功能特性
 
-- 🔍 **多站点采集**: 支持中国政府采购网、中国招标投标公共服务平台等多个招标网站
-- 🏷️ **智能筛选**: 按行业（金融、医疗、运营商等）和关键词（维保、数据库、大数据等）精准筛选
-- 📊 **美观报告**: 生成响应式HTML报告，支持搜索和分类浏览
-- ⚙️ **灵活配置**: YAML配置文件，轻松调整目标网站、行业和关键词
-- 🔄 **自动去重**: 基于招标编号和内容哈希自动去重
-- 📝 **详细日志**: 完整的运行日志，便于问题排查
+- ✅ **多网站采集**：支持中国政府采购网、中国招标投标公共服务平台、中国采购与招标网等
+- 🎯 **智能筛选**：基于关键词、行业、日期、金额等多维度筛选
+- 🏷️ **行业分类**：自动识别金融、医疗、运营商、政府、能源、教育等行业
+- 🔍 **关键词匹配**：支持数据库、大数据、中间件、信创等技术关键词
+- 🚫 **自动去重**：基于内容哈希自动去除重复数据
+- 📊 **可视化报告**：生成响应式HTML报告，支持搜索和筛选
+- ⚙️ **灵活配置**：通过YAML配置文件轻松管理
+- 📝 **详细日志**：完整的日志记录，便于调试和监控
 
-## 目录结构
+## 🚀 快速开始
 
-```
-bid-crawler/
-├── docs/                    # 文档
-│   ├── requirements.md      # 需求文档
-│   └── development.md       # 开发文档
-├── src/                     # 源代码
-├── config/                  # 配置文件
-├── reports/                 # 报告输出
-├── logs/                    # 运行日志
-├── tests/                   # 测试代码
-├── requirements.txt         # Python依赖
-├── run.sh                   # Linux运行脚本
-├── run.bat                  # Windows运行脚本
-└── README.md                # 本文件
-```
+### 环境要求
 
-## 快速开始
+- Python 3.9+
+- Linux / macOS / Windows
 
-### 1. 环境准备
+### 安装步骤
 
-```bash
-# 克隆/下载项目后，进入目录
-cd bid-crawler
+1. **克隆项目**
 
-# 创建虚拟环境
-python -m venv venv
+\`\`\`bash
+git clone <repository-url>
+cd bid-crawer
+\`\`\`
 
-# 激活虚拟环境
-# Linux/Mac:
-source venv/bin/activate
-# Windows:
-venv\Scripts\activate
+2. **运行系统**
 
-# 安装依赖
-pip install -r requirements.txt
-```
-
-### 2. 配置调整
-
-复制并编辑配置文件：
-
-```bash
-cp config/config.example.yaml config/config.yaml
-```
-
-根据需要修改 `config/config.yaml`：
-- 调整目标行业和关键词
-- 启用/禁用特定网站
-- 设置采集参数（时间范围、请求间隔等）
-
-### 3. 运行爬虫
-
-```bash
-# Linux/Mac
+Linux/Mac:
+\`\`\`bash
 ./run.sh
+\`\`\`
 
-# Windows
+Windows:
+\`\`\`bash
 run.bat
+\`\`\`
 
-# 或直接使用Python
-python -m src.main
-```
+首次运行会自动创建虚拟环境并安装依赖包。
 
-### 4. 查看报告
+### 配置文件
 
-报告生成在 `reports/` 目录下，使用浏览器打开 `bid_report_YYYY-MM-DD.html`。
+编辑 \`config/config.yaml\` 进行自定义配置：
 
-## 配置说明
+\`\`\`yaml
+# 爬虫配置
+crawler:
+  request_delay: 2        # 请求间隔(秒)
+  max_pages: 10          # 每个网站最大采集页数
 
-### 添加新的关键词
+# 筛选配置
+filters:
+  date_range: 7          # 采集最近N天的数据
+  min_amount: 0          # 最小金额(万元)
 
-编辑 `config/config.yaml`，在 `tech_keywords` 下添加：
-
-```yaml
+# 技术关键词
 tech_keywords:
   database:
-    - "新关键词"
-```
+    - "数据库"
+    - "GaussDB"
+    - "MySQL"
+  bigdata:
+    - "大数据"
+    - "Hadoop"
+    - "Spark"
+\`\`\`
 
-### 添加新的目标行业
+## 📖 使用说明
 
-```yaml
-industries:
-  - name: "新行业"
-    enabled: true
-    keywords:
-      - "行业关键词1"
-      - "行业关键词2"
-```
+### 基本用法
 
-### 添加新的招标网站
+\`\`\`bash
+# 使用默认配置运行
+python -m src.main
 
-```yaml
-websites:
-  - name: "新网站名称"
-    url: "https://example.com"
-    search_url: "https://example.com/search"
-    enabled: true
-    parser: "new_parser"  # 需要开发对应解析器
-```
+# 使用自定义配置
+python -m src.main --config custom.yaml
 
-## 定时运行
+# 限制采集页数
+python -m src.main --max-pages 5
 
-### Linux (Crontab)
+# 显示详细日志
+python -m src.main --verbose
+\`\`\`
 
-```bash
-# 每天早上8点运行
-crontab -e
-0 8 * * * /path/to/bid-crawler/run.sh
-```
+### 输出文件
 
-### Windows (计划任务)
+- **HTML报告**: \`reports/bid_report_YYYYMMDD.html\`
+- **原始数据**: \`data/bid_data_YYYYMMDD.json\`
+- **日志文件**: \`logs/crawler.log\`
 
-使用任务计划程序添加基本任务，执行 `run.bat`。
+## 🏗️ 项目结构
 
-## 文档
+\`\`\`
+bid-crawer/
+├── src/                      # 源代码目录
+│   ├── config/              # 配置管理模块
+│   ├── crawler/             # 爬虫核心模块
+│   │   └── parsers/         # 各网站解析器
+│   ├── filter/              # 数据筛选模块
+│   ├── report/              # 报告生成模块
+│   ├── models/              # 数据模型
+│   ├── utils/               # 工具模块
+│   └── main.py              # 主入口程序
+├── config/                   # 配置文件目录
+├── reports/                  # 报告输出目录
+├── data/                     # 原始数据目录
+├── logs/                     # 日志目录
+├── requirements.txt          # 依赖列表
+├── run.sh                    # Linux/Mac运行脚本
+└── README.md                 # 本文档
+\`\`\`
 
-- [需求文档](docs/requirements.md) - 详细功能需求说明
-- [开发文档](docs/development.md) - 技术设计和扩展指南
+## 🔧 扩展开发
 
-## 注意事项
+### 添加新网站解析器
 
-1. **合规使用**: 请遵守目标网站的使用条款和robots.txt规则
-2. **请求频率**: 默认设置了2秒请求间隔，请勿过于频繁访问
-3. **仅供参考**: 采集的信息仅供内部参考，不得用于商业用途
+1. 在 \`src/crawler/parsers/\` 目录下创建新的解析器文件
+2. 继承 \`BaseParser\` 类并实现抽象方法
+3. 在 \`config.yaml\` 中添加网站配置
+4. 在 \`CrawlerEngine\` 中注册新解析器
 
-## 许可证
+## ⚠️ 注意事项
 
-MIT License
+1. **遵守法律法规**：采集的信息仅供内部参考使用
+2. **尊重网站规则**：遵守目标网站的robots.txt规则
+3. **控制请求频率**：避免对目标网站造成过大压力
+4. **数据变化**：网站结构可能变化，需要定期维护解析器
+
+## 📝 开发文档
+
+详细的技术文档请查看：
+
+- [需求文档](requirements.md)
+- [开发文档](development.md)
+
+---
+
+**注意**：本项目采集的是公开招标信息，请合理使用，遵守相关法律法规。
