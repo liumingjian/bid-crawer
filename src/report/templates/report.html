@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>招标信息报告 - {{ generate_time }}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-card h3 {
+            font-size: 36px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .filter-bar input, .filter-bar select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .filter-bar input:focus, .filter-bar select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .bid-list { margin-bottom: 20px; }
+        .bid-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+        .bid-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(4px);
+        }
+        .bid-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .bid-title a {
+            color: #2c3e50;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .bid-title a:hover {
+            color: #667eea;
+        }
+        .bid-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            align-items: center;
+        }
+        .bid-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .industry-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .keyword-tag {
+            background: #fce4ec;
+            color: #c2185b;
+        }
+        .source-tag {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        .tab:hover:not(.active) {
+            background: #f0f4ff;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 22px; }
+            .stat-card { padding: 20px; }
+            .bid-card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 招标信息报告</h1>
+            <p>生成时间: {{ generate_time }} | 数据总数: {{ total_count }} 条</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>{{ total_count }}</h3>
+                <p>招标总数</p>
+            </div>
+            {% for source, count in by_source.items() %}
+            <div class="stat-card">
+                <h3>{{ count }}</h3>
+                <p>{{ source }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 搜索招标标题或单位..." onkeyup="filterItems()">
+        </div>
+
+        <div class="tabs" id="industryTabs">
+            <button class="tab active" onclick="filterByIndustry('all')">全部 ({{ total_count }})</button>
+            {% for industry, items_list in by_industry.items() %}
+            <button class="tab" onclick="filterByIndustry('{{ industry }}')">{{ industry }} ({{ items_list|length }})</button>
+            {% endfor %}
+        </div>
+
+        <div class="bid-list" id="bidList">
+            {% for item in items %}
+            <div class="bid-card" data-title="{{ item.title }}" data-purchaser="{{ item.purchaser or '' }}" data-industry="{{ item.industry or '其他' }}">
+                <div class="bid-title">
+                    <a href="{{ item.url }}" target="_blank">{{ item.title }}</a>
+                </div>
+                <div class="bid-meta">
+                    {% if item.publish_date %}
+                    <span>📅 {{ item.publish_date }}</span>
+                    {% endif %}
+                    {% if item.purchaser %}
+                    <span>🏢 {{ item.purchaser }}</span>
+                    {% endif %}
+                    {% if item.budget %}
+                    <span>💰 {{ item.budget }}万元</span>
+                    {% endif %}
+                    <span class="tag source-tag">{{ item.source }}</span>
+                    <span class="tag industry-tag">{{ item.industry or '其他' }}</span>
+                    {% for kw in item.matched_keywords %}
+                    <span class="tag keyword-tag">{{ kw }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        let currentIndustry = 'all';
+
+        function filterItems() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.bid-card');
+
+            cards.forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                const purchaser = card.dataset.purchaser.toLowerCase();
+                const industry = card.dataset.industry;
+
+                const matchesSearch = title.includes(input) || purchaser.includes(input);
+                const matchesIndustry = currentIndustry === 'all' || industry === currentIndustry;
+
+                card.style.display = (matchesSearch && matchesIndustry) ? 'block' : 'none';
+            });
+        }
+
+        function filterByIndustry(industry) {
+            currentIndustry = industry;
+
+            // 更新标签状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            filterItems();
+        }
+    </script>
+</body>
+</html>
